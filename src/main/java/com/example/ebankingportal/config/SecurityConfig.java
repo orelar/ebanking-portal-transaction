@@ -37,7 +37,7 @@ public class SecurityConfig {
     public JwtDecoder jwtDecoder() {
         return token -> Jwt.withTokenValue(token)
                 .header("alg", "none")
-                .claim("sub", "P-0123456789") // We manually set the customer ID here
+                .claim("sub", "P-0123456789")
                 .build();
     }
 }
