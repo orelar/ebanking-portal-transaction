@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebanking-portal-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ebanking-portal-api
+  template:
+    metadata:
+      labels:
+        app: ebanking-portal-api
+    spec:
+      containers:
+        - name: api
+          image: aurelia55/ebanking-portal:latest
+          ports:
+            - containerPort: 8080

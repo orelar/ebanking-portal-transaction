@@ -1,0 +1,17 @@
+version: 2.1
+jobs:
+  build-and-test:
+    docker:
+      - image: cimg/maven:3.8-openjdk-17
+    steps:
+      - checkout
+      - run:
+          name: Download Dependencies
+          command: mvn dependency:go-offline
+      - run:
+          name: Run Tests
+          command: mvn verify
+workflows:
+  main-workflow:
+    jobs:
+      - build-and-test
