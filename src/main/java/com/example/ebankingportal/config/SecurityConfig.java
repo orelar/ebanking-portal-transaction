@@ -29,15 +29,7 @@ public class SecurityConfig {
 
         return token -> Jwt.withTokenValue(token)
                 .header("alg", "none")
-<<<<<<< HEAD
-<<<<<<< HEAD
                 .claim("sub", "P-0123456789")
-=======
-                .claim("sub", "P-0123456789") // We manually set the customer ID here
->>>>>>> 3b820ba (initial commit for ebanking portal transaction)
-=======
-                .claim("sub", "P-0123456789")
->>>>>>> 9acf0d8 (initial commit for ebanking portal transaction)
                 .build();
     }
 }
