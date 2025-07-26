@@ -1,5 +1,6 @@
 package com.example.ebankingportal.controller;
 
+import com.example.ebankingportal.AbstractIntegrationTest;
 import com.example.ebankingportal.dto.PageTotalsDto;
 import com.example.ebankingportal.dto.TransactionDto;
 import com.example.ebankingportal.dto.TransactionPageDto;
@@ -7,7 +8,9 @@ import com.example.ebankingportal.service.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +29,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(TransactionController.class)
-class TransactionControllerTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+class TransactionControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
