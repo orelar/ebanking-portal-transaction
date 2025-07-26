@@ -12,10 +12,12 @@ import org.testcontainers.utility.DockerImageName;
 public abstract class AbstractIntegrationTest {
 
     @Container
-    static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0.26");
+    static final MySQLContainer<?> mySQLContainer = new MySQLContainer<>("mysql:8.0.26")
+            .withReuse(true);
 
     @Container
-    static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.3.0"));
+    static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.3.0"))
+            .withReuse(true);
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
