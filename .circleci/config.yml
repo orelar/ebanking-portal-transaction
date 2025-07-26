@@ -1,17 +1,19 @@
 version: 2.1
 jobs:
   build-and-test:
-    docker:
-      - image: maven:3.9-eclipse-temurin-17
+    machine:
+      image: ubuntu-2204:current
     steps:
       - checkout
       - run:
-          name: Download Dependencies
-          command: mvn dependency:go-offline
-      - run:
-          name: Run Tests
-          command: mvn verify
+          name: Run Maven Build & Tests
+          command: mvn -B verify
+
 workflows:
   main-workflow:
     jobs:
-      - build-and-test
+      - build-and-test:
+          filters:
+            branches:
+              only:
+                - main
