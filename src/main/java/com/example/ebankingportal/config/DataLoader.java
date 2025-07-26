@@ -30,7 +30,7 @@ public class DataLoader implements CommandLineRunner {
 //                        .valueDate(LocalDate.now())
 //                        .description("Coffee Shop")
 //                        .build()
-//        ));
+
 
         repository.saveAll(List.of(
                 new Transaction(
