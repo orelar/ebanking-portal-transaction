@@ -8,6 +8,8 @@ jobs:
       - run:
           name: Run Maven Build & Tests
           command: mvn -B verify
+      - store_test_results:
+          path: target/surefire-reports
 
 workflows:
   main-workflow:
