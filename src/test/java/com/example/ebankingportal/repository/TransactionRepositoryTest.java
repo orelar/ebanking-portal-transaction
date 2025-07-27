@@ -1,11 +1,10 @@
 package com.example.ebankingportal.repository;
 
-import com.example.ebankingportal.AbstractIntegrationTest;
 import com.example.ebankingportal.model.Transaction;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -15,31 +14,26 @@ import java.time.Month;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-class TransactionRepositoryTest extends AbstractIntegrationTest {
+@DataJpaTest
+class TransactionRepositoryTest {
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     @Autowired
     private TransactionRepository transactionRepository;
 
-    @AfterEach
-    void tearDown() {
-        transactionRepository.deleteAll();
-    }
-
     @Test
     void findByCustomerIdAndValueDateBetween_ReturnsCorrectTransactions() {
-        String customerId = "CUSTOMER-123";
-
-        transactionRepository.save(new Transaction("t7", customerId, "IBAN-1", BigDecimal.TEN, "USD", LocalDate.of(2025, Month.JULY, 15), "July Transaction"));
-        transactionRepository.save(new Transaction("t8", customerId, "IBAN-1", BigDecimal.TEN, "USD", LocalDate.of(2025, Month.JUNE, 15), "June Transaction"));
+        entityManager.persist(new Transaction("t1", "CUST-123", "IBAN-1", BigDecimal.TEN, "USD", LocalDate.of(2025, Month.JULY, 15), "July Transaction"));
 
         LocalDate startDate = LocalDate.of(2025, Month.JULY, 1);
         LocalDate endDate = LocalDate.of(2025, Month.JULY, 31);
         PageRequest pageable = PageRequest.of(0, 10);
 
-        Page<Transaction> result = transactionRepository.findByCustomerIdAndValueDateBetween(customerId, startDate, endDate, pageable);
+        Page<Transaction> result = transactionRepository.findByCustomerIdAndValueDateBetween("CUST-123", startDate, endDate, pageable);
 
         assertEquals(1, result.getTotalElements());
-        assertEquals("t7", result.getContent().get(0).getId());
+        assertEquals("t1", result.getContent().get(0).getId());
     }
 }
