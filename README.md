@@ -17,13 +17,31 @@ This project is a comprehensive solution developed for a backend engineering hir
 
 ## Architecture
 
-The system is a standalone microservice with a layered architecture, designed to operate within an event-driven ecosystem.
+The system is designed as a standalone **microservice**, focusing on the single business capability of managing and serving transaction data. It follows a classic **layered architecture** to ensure a clean separation of concerns.
 
-**Data Flow:**
-1.  **Event Ingestion**: The `KafkaListener` subscribes to a `transactions-topic` to consume new transaction events.
-2.  **Persistence**: Transactions are saved to a MySQL database, which serves as the queryable read-store.
-3.  **API Serving**: A secure REST API exposes endpoints for clients to fetch transaction data.
-4.  **Security**: API requests are authenticated and authorized using JWTs.
+### Architectural Style
+-   **Microservice**: The application is self-contained, independently deployable, and focused on a single responsibility. This allows for scalability and easier maintenance.
+-   **Event-Driven**: The service is designed to react to events. It consumes transaction data asynchronously from a Kafka topic, decoupling it from the systems that produce those transactions.
+-   **Layered**: The code is organized into distinct layers:
+    1.  **Controller Layer**: Handles incoming HTTP requests and API contracts.
+    2.  **Service Layer**: Contains the core business logic, including data processing and calculations.
+    3.  **Repository Layer**: Manages data access and persistence using Spring Data JPA.
+    4.  **Model Layer**: Defines the core data structures (entities and DTOs).
+
+### Key Components
+-   **Transaction API (Spring Boot)**: The core of the project. It's a Java application that orchestrates all functionality.
+-   **Kafka Topic**: The entry point for new data. The API's `KafkaListener` subscribes to this topic to receive new transaction events in real-time.
+-   **MySQL Database**: The system's source of truth for querying. It serves as a durable, query-optimized store for transaction data.
+-   **External Services**: The API integrates with external systems like an **Authentication Service** (for validating JWTs) and an **Exchange Rate API** (for currency conversion), which are essential in a real-world microservices ecosystem.
+
+### Data Flow
+1.  **Event Ingestion**: The `KafkaListener` consumes a new transaction event from the `transactions-topic`.
+2.  **Persistence**: The listener saves the transaction data to the MySQL database.
+3.  **Client Request**: A client (like the e-Banking frontend) sends a `GET` request with a valid JWT to the API.
+4.  **Security**: The API's security filter validates the JWT.
+5.  **Data Retrieval**: The `TransactionService` queries the MySQL database to fetch the requested transactions.
+6.  **Enrichment**: The service calls the external Exchange Rate API to get the necessary currency conversion rates.
+7.  **Response**: The service calculates the page totals and sends the final, structured DTO back to the client.
 
 ![Architecture Diagram](images/architecture.png)
 
