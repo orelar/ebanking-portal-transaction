@@ -1,15 +1,13 @@
 version: '3.8'
 services:
-  ebanking-portal:
-    build: .
-    container_name: ebanking-portal-app
-    ports:
-      - "8080:8080"
+  db:
+    image: mysql:8.0.26
+    container_name: mysql-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/ebankingportal?useSSL=false&allowPublicKeyRetrieval=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=ebankingportal
+    ports:
+      - "3306:3306"
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -32,6 +30,20 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  ebanking-portal:
+    build: .
+    container_name: ebanking-portal-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/ebankingportal?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    depends_on:
+      - db
+      - kafka
 
   prometheus:
     image: prom/prometheus:latest
