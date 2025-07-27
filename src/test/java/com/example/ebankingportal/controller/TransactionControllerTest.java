@@ -3,16 +3,16 @@ package com.example.ebankingportal.controller;
 import com.example.ebankingportal.dto.PageTotalsDto;
 import com.example.ebankingportal.dto.TransactionDto;
 import com.example.ebankingportal.dto.TransactionPageDto;
+import com.example.ebankingportal.model.Transaction;
 import com.example.ebankingportal.service.TransactionService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,16 +20,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TransactionController.class)
-class TransactionControllerTest  {
+class TransactionControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,11 +35,19 @@ class TransactionControllerTest  {
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    private KafkaTemplate<String, Transaction> kafkaTemplate;
+
     @TestConfiguration
     static class TestConfig {
         @Bean
         public TransactionService transactionService() {
             return Mockito.mock(TransactionService.class);
+        }
+
+        @Bean
+        public KafkaTemplate<String, Transaction> kafkaTemplate() {
+            return Mockito.mock(KafkaTemplate.class);
         }
     }
 
