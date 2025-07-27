@@ -1,15 +1,17 @@
 version: 2.1
+
 jobs:
   build-and-test:
-    docker:
-      - image: maven:3.9-eclipse-temurin-17
+    machine:
+      image: ubuntu-2204:current
     steps:
       - checkout
       - run:
-          name: Run Tests
+          name: Run Maven Build & Tests
           command: mvn -B verify
       - store_test_results:
           path: target/surefire-reports
+
 workflows:
   main-workflow:
     jobs:
