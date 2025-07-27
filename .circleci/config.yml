@@ -6,16 +6,22 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run Maven Build & Tests
-          command: mvn -B verify
+          name: Start Test Environment
+          command: docker-compose -f docker-compose.ci.yml up -d
+      - run:
+          name: Wait for Services
+          command: |
+            echo "Waiting for Kafka..."
+            while ! docker exec kafka kafka-topics --bootstrap-server localhost:9092 --list; do
+              sleep 5
+            done
+            echo "Kafka is up!"
+      - run:
+          name: Run Maven Tests
+          command: mvn -B verify -Dspring.profiles.active=ci
       - store_test_results:
           path: target/surefire-reports
-
 workflows:
   main-workflow:
     jobs:
-      - build-and-test:
-          filters:
-            branches:
-              only:
-                - main
+      - build-and-test
